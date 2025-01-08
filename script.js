@@ -1,24 +1,8 @@
 const grid = document.querySelector('.grid');
 let wordRow = [];
 let wordCell = [];
-
-const fetchWord = async () => {
-    try {
-        const response = await fetch('https://random-word-api.herokuapp.com/word?number=1&length=5');
-        const data = await response.json();
-        return data[0].toUpperCase();
-    } catch (error) {
-        console.error('Error fetching word:', error);
-        return 'ERROR';
-    }
-};
-
-let targetWord = '';
-
-fetchWord().then(word => {
-    targetWord = word;
-    console.log('Target word:', targetWord);
-});
+const wordSolution = 'FUDER'
+console.log('Palavra:', wordSolution)
 
 const createGrid = () => {
     const rows = 6;
@@ -37,18 +21,18 @@ const createGrid = () => {
     }
 }
 
-window.addEventListener('DOMContentLoaded', ()=>{
+window.addEventListener('DOMContentLoaded', () => {
     createGrid();
 });
 
 window.addEventListener('keypress', (e) => {
-    if(/[A-Z]/.test(e.key.toUpperCase())){
-        if(e.key.length == 1){
+    if (/[A-Z]/.test(e.key.toUpperCase())) {
+        if (e.key.length == 1) {
             wordCell.push(e.key.toUpperCase());
-            document.querySelector(`.row-${wordRow.length} > .cell-${wordCell.length-1}`).textContent = e.key.toUpperCase();
+            document.querySelector(`.row-${wordRow.length} > .cell-${wordCell.length - 1}`).textContent = e.key.toUpperCase();
         }
     }
-    if(wordCell.length == 5){
+    if (wordCell.length == 5) {
         wordRow.push(wordCell);
         console.log(wordCell)
         checkWord(wordCell);
@@ -57,13 +41,26 @@ window.addEventListener('keypress', (e) => {
 })
 
 const checkWord = (word) => {
-    let solution = targetWord.split('');
-    for(let i = 0; i < word.length; i++){
-        if(word[i] == solution[i]){
-            document.querySelector(`.row-${wordRow.length-1} > .cell-${i}`).classList.add('correct');
-            solution[i] = '';
-        }else if(solution.includes(word[i])){
-            document.querySelector(`.row-${wordRow.length-1} > .cell-${i}`).classList.add('misplaced');
+    let solucao = wordSolution.split('')
+    for (let i = 0; i < 5; i++){
+        let letra = word[i]
+        let posicao = solucao.indexOf(letra)
+        if(posicao == -1){
+            console.log('letra', letra, 'nao existe na palavra')
+        } else {
+            if(letra == solucao[i]){
+                pintarCerto(wordRow, i)
+            } else {
+                pintarQuase(wordRow, i)
+            }
+            solucao[posicao] = "#"
         }
     }
+}
+
+const pintarCerto = (x, y) => {
+    document.querySelector(`.row-${x.length - 1} > .cell-${y}`).classList.add('correct');
+}
+const pintarQuase = (x, y) => {
+    document.querySelector(`.row-${x.length - 1} > .cell-${y}`).classList.add('misplaced');
 }
